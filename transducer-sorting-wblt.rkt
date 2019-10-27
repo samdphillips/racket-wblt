@@ -1,9 +1,9 @@
 #lang racket/base
 
-(require rebellion/base/pair
-         rebellion/base/variant
-
-         rebellion/collection/list
+(require rebellion/base/variant
+         
+         (submod rebellion/private/list freedom)
+         (submod rebellion/private/pair freedom)
          
          rebellion/streaming/transducer
          

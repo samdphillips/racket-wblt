@@ -108,3 +108,17 @@
   (run-benchmark bottom-10-benchmark
                  #:size 1000
                  #:iterations 100))
+
+#|
+WBLT w/ freedom (comparator, pair, list)
+WBLT (milliseconds)                          47.00    187.00     88.94
+Rebellion lazy sort (milliseconds)           62.00   2578.00    116.41
+Standard racket sort (milliseconds)           0.00     32.00     11.10
+
+WBLT w/ freedom (comparator, pair, list)
+Rebellion w/ freedom (comparator, list)
+WBLT (milliseconds)                          63.00    141.00     97.22
+Rebellion lazy sort (milliseconds)           47.00    110.00     76.28
+Standard racket sort (milliseconds)           0.00     32.00     12.91
+
+|#

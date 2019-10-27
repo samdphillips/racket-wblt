@@ -1,9 +1,9 @@
 #lang racket/base
 
-(require rebellion/base/comparator)
+(require (submod rebellion/private/comparator freedom))
 
 (provide (all-defined-out)
-         (all-from-out rebellion/base/comparator))
+         (all-from-out (submod rebellion/private/comparator freedom)))
 
 (define (compare>? cmp a b)
   (equal? greater (compare cmp a b)))
