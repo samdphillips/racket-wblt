@@ -1,6 +1,7 @@
 #lang racket/base
 
-(require rebellion/base/variant
+(require rebellion/base/pair
+         rebellion/base/variant
 
          rebellion/collection/list
          
@@ -16,14 +17,16 @@
 (provide sorting)
 
 (define (sorting-tree-compare cmp)
+  (define value-cmp
+    (comparator-map cmp pair-first))
   (define epoch-cmp
-    (comparator-reverse real<=>))
+    (comparator-map (comparator-reverse real<=>) pair-second))
   (tree-compare
    (make-comparator
     (lambda (a b)
       (refine-compare
-       (cmp       (car a) (car b))
-       (epoch-cmp (cdr a) (cdr b)))))))
+       (value-cmp a b)
+       (epoch-cmp a b))))))
 
 (module+ test
   (require rackunit)
@@ -43,18 +46,18 @@
             (fail-check))))))
     
   (check-tree-compare? real<=>
-                       (make-singleton-tree (cons 1 0))
-                       (make-singleton-tree (cons 2 1))
+                       (make-singleton-tree (pair 1 0))
+                       (make-singleton-tree (pair 2 1))
                        lesser)
   
   (check-tree-compare? real<=>
-                       (make-singleton-tree (cons 2 1))
-                       (make-singleton-tree (cons 1 0))
+                       (make-singleton-tree (pair 2 1))
+                       (make-singleton-tree (pair 1 0))
                        greater)
 
   (check-tree-compare? real<=>
-                       (make-singleton-tree (cons 42 100))
-                       (make-singleton-tree (cons 42 50))
+                       (make-singleton-tree (pair 42 100))
+                       (make-singleton-tree (pair 42 50))
                        lesser))
 
 (define (sorting [comparator real<=>] #:key [key-function values])
@@ -69,12 +72,15 @@
     (variant #:consume (list-insert state element)))
   
   (define (half-close state)
-    (variant #:half-closed-emit
-             (tree-insert* cmp
-                           empty-tree
-                           (for/list ([v (in-list state)]
-                                      [n (in-naturals)])
-                             (cons v n)))))
+    (define next-state
+      (tree-insert* cmp
+                    empty-tree
+                    (for/list ([v (in-list state)]
+                               [n (in-naturals)])
+                      (pair v n))))
+    (if (empty-tree? next-state)
+        (variant #:finish #f)
+        (variant #:half-closed-emit next-state)))             
   
   (define (half-closed-emit tree)
     (define-values (element next-tree) (tree-remove-min cmp tree))
@@ -82,7 +88,7 @@
       (cond
         [(empty-tree? next-tree) (variant #:finish #f)]
         [else (variant #:half-closed-emit next-tree)]))
-    (half-closed-emission next-state (car element)))
+    (half-closed-emission next-state (pair-first element)))
   
   (make-transducer
    #:starter start

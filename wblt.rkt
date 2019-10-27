@@ -76,7 +76,7 @@
                          (tree-merge cmp t (car ts))
                          ms))]))))
   (if (null? ts)
-      ts
+      empty-tree
       (merge-all ts null)))
 
 (define (tree-insert cmp t v)
