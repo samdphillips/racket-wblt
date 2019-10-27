@@ -1,5 +1,7 @@
 #lang racket/base
 
+;; from https://github.com/jackfirth/rebellion/blob/master/private/transducer-sorting-test.rkt
+
 (module+ test
   (require rackunit
            rebellion/base/comparator
