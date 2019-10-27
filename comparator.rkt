@@ -10,9 +10,9 @@
 
 (define-syntax refine-compare
   (syntax-rules ()
-    [(_ e) e]
-    [(_ e0 e1 en ...)
-     (let ([v e0])
+    [(_ (cmp e0 e1)) (compare cmp e0 e1)]
+    [(_ (cmp e0 e1) c1 cn ...)
+     (let ([v (compare cmp e0 e1)])
        (if (equal? equivalent v)
-           (refine-compare e1 en ...)
+           (refine-compare c1 cn ...)
            v))]))
